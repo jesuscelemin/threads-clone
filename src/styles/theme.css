@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .h1-bold {
+    @apply text-[24px] font-bold leading-[31.2px];
+  }
+
+  .h1-semibold {
+    @apply text-[24px] font-semibold leading-[31.2px];
+  }
+
+  .h2-bold {
+    @apply text-[20px] font-bold leading-[26px];
+  }
+
+  .h2-semibold {
+    @apply text-[20px] font-semibold leading-[24.8px];
+  }
+
+  .base-regular {
+    @apply text-[16px] font-normal leading-[22.4px];
+  }
+
+  .base-medium {
+    @apply text-[16px] font-medium leading-[22.4px];
+  }
+
+  .base-semibold {
+    @apply text-[16px] font-semibold leading-[20.8px];
+  }
+
+  .small-regular {
+    @apply text-[14px] font-normal leading-[19.6px];
+  }
+
+  .small-medium {
+    @apply text-[14px] font-medium leading-[18.2px];
+  }
+
+  .small-semibold {
+    @apply text-[14px] font-semibold leading-[18.2px];
+  }
+
+  .x-small-regular {
+    @apply text-[12px] font-normal leading-[15.6px];
+  }
+
+  .x-small-medium {
+    @apply text-[12px] font-medium leading-[15.6px];
+  }
+
+  .x-small-semibold {
+    @apply text-[12px] font-semibold leading-[15.6px];
+  }
+
+  .subtle-regular {
+    @apply text-[11px] font-normal leading-[13px];
+  }
+
+  .subtle-medium {
+    @apply text-[11px] font-medium leading-[13px];
+  }
+
+  .css-invert {
+    @apply invert-[50%] brightness-200;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    border-radius: 2px;
+  }
+}
