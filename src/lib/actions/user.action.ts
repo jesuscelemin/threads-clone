@@ -3,11 +3,30 @@
 import User from '@/models/user.model'
 import { connectToDB } from '../mongoose'
 import bcrypt from 'bcrypt'
-import {
-  CreateUserParams,
-  LoginUserParams
-} from './shared.types'
+import { CreateUserParams, LoginUserParams } from './shared.types'
 import { revalidatePath } from 'next/cache'
+import { auth } from '@/auth'
+import { UpdateUserParams } from '@/types'
+
+export async function getCurrentUser() {
+  try {
+    connectToDB()
+
+    const session = await auth()
+    if (!session?.user) return null
+
+    const currentUser = await User.findOne({
+      _id: session.user.id
+    }).lean()
+
+    if (!currentUser) return null
+
+    return JSON.parse(JSON.stringify(currentUser))
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
 
 export async function createUser(params: CreateUserParams) {
   try {
@@ -34,6 +53,25 @@ export async function createUser(params: CreateUserParams) {
   }
 }
 
+export async function updateUser(params: UpdateUserParams) {
+  try {
+    connectToDB()
+
+    const { userId, updateData, path } = params
+
+    console.log(userId, updateData, path)
+
+    await User.findByIdAndUpdate({ _id: userId }, updateData, { new: true })
+
+    if (path === '/profile/edit') {
+      revalidatePath(path)
+    }
+  } catch (error) {
+    console.log('Error actualizando al usuario: ', error)
+    throw error
+  }
+}
+
 export async function loginUser(params: LoginUserParams) {
   try {
     connectToDB()
@@ -51,21 +89,6 @@ export async function loginUser(params: LoginUserParams) {
     return { user: JSON.stringify(user) }
   } catch (error) {
     console.log(error)
-    throw error
-  }
-}
-
-export async function getUserById(params: any) {
-  try {
-    connectToDB()
-
-    const { userId } = params
-
-    const user = await User.findOne({ userId })
-
-    return user
-  } catch (error) {
-    console.log('Error getting user by ID:', error)
     throw error
   }
 }

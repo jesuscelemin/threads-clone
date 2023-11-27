@@ -1,12 +1,20 @@
 import { z } from 'zod'
 
-export const RegisterSchema = z.object({
-  name: z.string().min(3, { message: 'El nombre es muy corto' }),
-  email: z.string().email({ message: 'El emainl no es válido' }),
-  password: z.string().min(6, { message: 'La contraseña es demasiado corta' })
-})
-
-export const LoginSchema = z.object({
-  email: z.string().email({ message: 'El email no es válido' }),
-  password: z.string().min(6, { message: 'La contraseña es demasiado corta' })
+export const ProfileSchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: 'Mínimo 3 caracteres' })
+    .max(30, { message: 'Máximo 30 caracteres' }),
+  username: z
+    .string()
+    .min(3, { message: 'Mínimo 3 caracteres' })
+    .max(30, { message: 'Máximo 30 caracteres' }),
+  bio: z
+    .string()
+    .min(10, { message: 'Mínimo 10 caracteres' })
+    .max(100, { message: 'Máximo 100 caracteres' }),
+  image: z
+    .string()
+    .min(1, { message: 'La imagen es requerida' })
+    .url({ message: 'URL inválida' })
 })

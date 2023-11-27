@@ -9,6 +9,3 @@ export interface LoginUserParams {
   password: string
 }
 
-export interface GetUserByIdProps {
-  userId: string
-}
