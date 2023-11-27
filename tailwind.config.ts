@@ -22,6 +22,7 @@ const config: Config = {
           300: '#EFEFEF',
           400: '#777777'
         },
+        glassmorphism: 'rgba(16, 16, 18, 0.60)',
         'accent-blue': '#0095F6',
         'accent-gray': '#465A7E'
       },

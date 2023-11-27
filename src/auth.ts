@@ -20,7 +20,6 @@ export const {
 
           if (parsedCredentials.success) {
             const { email, password } = parsedCredentials.data
-            console.log(email, password)
 
             const user = await User.findOne({ email })
 
@@ -41,6 +40,22 @@ export const {
       }
     })
   ],
+  callbacks: {
+    async jwt({ token, account, user }: any) {
+      if (account) {
+        token.id = user?._id
+        token.img = user.image
+      }
+      return token
+    },
+    async session({ session, token }: any) {
+      session.user.id = token.id
+      session.user.img = token.img
+
+      return session
+    }
+  },
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
     newUser: '/register'

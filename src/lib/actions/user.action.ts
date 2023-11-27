@@ -3,7 +3,10 @@
 import User from '@/models/user.model'
 import { connectToDB } from '../mongoose'
 import bcrypt from 'bcrypt'
-import { CreateUserParams, LoginUserParams } from './shared.types'
+import {
+  CreateUserParams,
+  LoginUserParams
+} from './shared.types'
 import { revalidatePath } from 'next/cache'
 
 export async function createUser(params: CreateUserParams) {
@@ -48,6 +51,21 @@ export async function loginUser(params: LoginUserParams) {
     return { user: JSON.stringify(user) }
   } catch (error) {
     console.log(error)
+    throw error
+  }
+}
+
+export async function getUserById(params: any) {
+  try {
+    connectToDB()
+
+    const { userId } = params
+
+    const user = await User.findOne({ userId })
+
+    return user
+  } catch (error) {
+    console.log('Error getting user by ID:', error)
     throw error
   }
 }

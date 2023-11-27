@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { loginUser } from '@/lib/actions/user.action'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 const Login = () => {
   const router = useRouter()
@@ -37,13 +38,24 @@ const Login = () => {
       if (res.user) {
         const user = JSON.parse(res.user)
 
-        if (!user.onboarded) {
-          router.push('/onboarding')
-        } else {
-          router.push('/')
+        if (user) {
+          await signIn('credentials', {
+            email: user.email,
+            password: data.password,
+            redirect: false,
+          })
+
+          if (!user.onboarded) {
+            router.push('/onboarding')
+          } else {
+            router.push('/')
+          }
         }
+
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
