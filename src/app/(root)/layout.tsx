@@ -2,13 +2,12 @@ import type { Metadata } from 'next'
 import '../globals.css'
 import React from 'react'
 import AuthProvider from '@/context/AuthProvider'
-import Navbar from '@/components/shared/navbar/Navbar'
-import BottomNav from '@/components/shared/BottomNav'
 import SidebarLeft from '@/components/shared/SidebarLeft'
-import SidebarRight from '@/components/shared/SidebarRight'
+import BottomNav from '@/components/shared/BottomNav'
 import { inter } from '@/components/ui/font'
-import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
+import SidebarRight from '@/components/shared/SidebarRight'
+import { getCurrentUser } from '@/lib/actions/user.action'
 
 export const metadata: Metadata = {
   title: 'Threads Clone',
@@ -20,18 +19,17 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
-  if (!session?.user) redirect('/login')
+  const user = await getCurrentUser()
+  if (!user) redirect('/login')
 
   return (
     <html lang="en">
       <body className={inter.variable}>
         <AuthProvider>
-          <Navbar />
           <main className="flex flex-row">
-            <SidebarLeft userId={session?.user.id} />
+            <SidebarLeft user={user} />
             <section className="flex min-h-screen flex-1 flex-col items-center bg-dark-100 px-6 pb-10 pt-28 max-md:pb-32 sm:px-10">
-              <div className="w-full max-w-4xl">{children}</div>
+              <div className="w-full max-w-[620px]">{children}</div>
             </section>
             <SidebarRight />
           </main>

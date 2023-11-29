@@ -1,4 +1,4 @@
-import { IUser } from "@/models/user.model"
+import { IUser } from '@/models/user.model'
 
 export interface AvatarProps {
   src: string | null | undefined
@@ -13,22 +13,20 @@ export interface DropdownMenuProps {
 }
 
 export interface SidebarLeftProps {
-  userId: string
+  user: Partial<IUser>
 }
 
 export interface ProfileProps {
   user: {
-    _id: string,
-    name: string,
-    username: string,
-    image: string,
+    _id: string
+    name: string
+    username: string
+    image: string
     bio: string
-  },
+  }
   btnTitle: string
 }
 
-export interface UpdateUserParams {
-  userId: string
-  updateData: Partial<IUser>
-  path: string
+export interface PostThreadProps {
+  user: Partial<IUser>
 }

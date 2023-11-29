@@ -81,7 +81,7 @@ const Profile = ({ user, btnTitle }: ProfileProps) => {
         userId: user._id,
         updateData: {
           name: values.name,
-          username: values.username.toLowerCase(),
+          username: `@${values.username.toLowerCase()}`,
           bio: values.bio,
           image: values.image,
           onboarded: true
@@ -111,7 +111,11 @@ const Profile = ({ user, btnTitle }: ProfileProps) => {
           render={({ field }) => (
             <FormItem className="relative">
               <FormLabel className="relative flex h-24 w-24 cursor-pointer items-center justify-center rounded-full bg-dark-100">
-                <Avatar src={field.value} isFill className='rounded-full object-cover'/>
+                <Avatar
+                  src={field.value}
+                  isFill
+                  className="rounded-full object-cover"
+                />
               </FormLabel>
               <FormControl>
                 <Input

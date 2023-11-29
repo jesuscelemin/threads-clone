@@ -3,10 +3,10 @@
 import User from '@/models/user.model'
 import { connectToDB } from '../mongoose'
 import bcrypt from 'bcrypt'
-import { CreateUserParams, LoginUserParams } from './shared.types'
+import { CreateUserParams, LoginUserParams, UpdateUserParams } from './shared.types'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
-import { UpdateUserParams } from '@/types'
+
 
 export async function getCurrentUser() {
   try {

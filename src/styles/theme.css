@@ -63,10 +63,6 @@
     @apply text-[11px] font-medium leading-[13px];
   }
 
-  .css-invert {
-    @apply invert-[50%] brightness-200;
-  }
-
   .custom-scrollbar::-webkit-scrollbar {
     width: 3px;
     height: 3px;
