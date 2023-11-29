@@ -30,3 +30,36 @@ export interface ProfileProps {
 export interface PostThreadProps {
   user: Partial<IUser>
 }
+
+export interface ThreadCardProps {
+  id: string
+  currentUserId: string
+  parentId: string | null
+  text: string
+  image: string
+  createdAt: Date
+  author: {
+    name: string
+    image: string
+    _id: string
+  }
+  community: {
+    id: string
+    name: string
+    image: string
+  } | null
+  comments: {
+    author: {
+      image: string
+    }
+  }[]
+  isComment?: boolean
+}
+
+export interface CommentProps {
+  threadId: string,
+  userImg: string,
+  author: string,
+  userId: string,
+  username: string
+}

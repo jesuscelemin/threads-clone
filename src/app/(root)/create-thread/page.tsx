@@ -10,7 +10,7 @@ const page = async () => {
     <section>
       <h1 className="h1-semibold text-light-100">Crear Hilo</h1>
 
-      <PostThread userId={user._id} />
+      <PostThread user={user} />
     </section>
   )
 }

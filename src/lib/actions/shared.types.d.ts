@@ -1,4 +1,4 @@
-import { IUser } from "@/models/user.model"
+import { IUser } from '@/models/user.model'
 
 export interface CreateUserParams {
   name: string
@@ -25,3 +25,10 @@ export interface CreateThreadParams {
   communityId: string | null
 }
 
+export interface AddCommentToThreadParams {
+  threadId: string
+  commentText: string
+  image: string
+  userId: string
+  path: string
+}

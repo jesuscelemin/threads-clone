@@ -45,6 +45,9 @@ const config: Config = {
       }
     }
   },
+  variants: {
+    fill: ['hover', 'focus']
+  },
   plugins: [require('tailwindcss-animate')]
 }
 export default config

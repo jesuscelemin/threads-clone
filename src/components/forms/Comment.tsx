@@ -1,12 +1,10 @@
 'use client'
 
-import { PostThreadProps } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form'
-import { ThreadValidation } from '@/validations/thread'
 import { Textarea } from '../ui/textarea'
 import Avatar from '../shared/Avatar'
 import { Button } from '../ui/button'
@@ -15,23 +13,30 @@ import { ChangeEvent, useState } from 'react'
 import { Input } from '../ui/input'
 import { isBase64Image } from '@/lib/utils'
 import { useUploadThing } from '@/lib/uploadthing'
-import { createThread } from '@/lib/actions/thread.action'
+import { CommentProps } from '@/types'
 import Link from 'next/link'
 import { Label } from '@radix-ui/react-label'
+import { CommentValidation } from '@/validations/comment'
+import { addCommentToThread } from '@/lib/actions/thread.action'
 
-const PostThread = ({ user }: PostThreadProps) => {
+const Comment = ({
+  threadId,
+  userImg,
+  author,
+  userId,
+  username
+}: CommentProps) => {
   const router = useRouter()
   const pathname = usePathname()
   const [files, setFiles] = useState<File[]>([])
   const [imgUrl, setImgUrl] = useState('')
   const { startUpload } = useUploadThing('media')
 
-  const form = useForm<z.infer<typeof ThreadValidation>>({
-    resolver: zodResolver(ThreadValidation),
+  const form = useForm<z.infer<typeof CommentValidation>>({
+    resolver: zodResolver(CommentValidation),
     defaultValues: {
-      thread: '',
-      image: '',
-      accountId: user._id
+      comment: '',
+      image: ''
     }
   })
 
@@ -66,8 +71,8 @@ const PostThread = ({ user }: PostThreadProps) => {
     setFiles([])
   }
 
-  const handleCreateThread = async (
-    values: z.infer<typeof ThreadValidation>
+  const handleCreateComment = async (
+    values: z.infer<typeof CommentValidation>
   ) => {
     try {
       const blob = values.image || ''
@@ -81,11 +86,11 @@ const PostThread = ({ user }: PostThreadProps) => {
         }
       }
 
-      await createThread({
-        text: values.thread || '',
+      await addCommentToThread({
+        threadId,
         image: values.image || '',
-        author: user._id,
-        communityId: null,
+        commentText: values.comment || '',
+        userId,
         path: pathname
       })
 
@@ -97,36 +102,37 @@ const PostThread = ({ user }: PostThreadProps) => {
       console.log(error)
     }
   }
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleCreateThread)}
-        className="flex w-full py-3"
+        onSubmit={form.handleSubmit(handleCreateComment)}
+        className="flex w-full pb-3"
       >
         <Link
-          href={`/profile/${user._id}`}
+          href={`/profile/${userId}`}
           className="relative mr-4 h-[36px] w-[36px]"
         >
           <Avatar
-            src={user.image}
+            src={userImg}
             isFill
             className="cursor-pointer rounded-full object-cover"
           />
         </Link>
 
-        <div className="flex h-full w-full flex-col items-start">
+        <div className="flex h-full w-full flex-col items-start gap-5">
           <FormField
             control={form.control}
-            name="thread"
+            name="comment"
             render={({ field }) => (
               <FormItem>
                 <Label className="base-semibold text-light-100">
-                  @{user.username}
+                  @{username}
                 </Label>
                 <FormControl>
                   <Textarea
                     rows={1}
-                    placeholder="Inicia un hilo..."
+                    placeholder={`Responder a ${author}`}
                     className="w-full resize-none rounded-xl border border-transparent bg-transparent p-0 text-light-200 focus-visible:ring-transparent focus-visible:ring-offset-0"
                     {...field}
                   />
@@ -200,4 +206,4 @@ const PostThread = ({ user }: PostThreadProps) => {
     </Form>
   )
 }
-export default PostThread
+export default Comment
