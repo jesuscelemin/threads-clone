@@ -114,18 +114,18 @@ const PostThread = ({ user }: PostThreadProps) => {
           />
         </Link>
 
-        <div className="flex h-full w-full flex-col items-start">
+        <div className="flex h-full w-full flex-col items-start gap-5">
           <FormField
             control={form.control}
             name="thread"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='w-full'>
                 <Label className="base-semibold text-light-100">
                   @{user.username}
                 </Label>
                 <FormControl>
                   <Textarea
-                    rows={1}
+                    rows={2}
                     placeholder="Inicia un hilo..."
                     className="w-full resize-none rounded-xl border border-transparent bg-transparent p-0 text-light-200 focus-visible:ring-transparent focus-visible:ring-offset-0"
                     {...field}

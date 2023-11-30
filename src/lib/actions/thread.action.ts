@@ -142,3 +142,25 @@ export async function addCommentToThread(params: AddCommentToThreadParams) {
     throw new Error('Imposible agregar el comentario')
   }
 }
+
+export async function getAllChildThreads(threadId: string): Promise<any[]> {
+  try {
+    await connectToDB()
+
+    const childThreads = await Thread.find({ parentId: threadId })
+
+    const descendantThreads = []
+
+    for (const childThread of childThreads) {
+      const descendants = await getAllChildThreads(childThread._id)
+      descendantThreads.push(childThread, ...descendants)
+    }
+
+    return descendantThreads
+  } catch (error) {
+    console.error('Error mientras se buscaba el hilo:', error)
+    throw new Error('Imposible encontrar el hilo')
+  }
+}
+
+

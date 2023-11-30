@@ -125,7 +125,7 @@ const Comment = ({
             control={form.control}
             name="comment"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='w-full'>
                 <Label className="base-semibold text-light-100">
                   @{username}
                 </Label>

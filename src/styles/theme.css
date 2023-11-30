@@ -63,6 +63,10 @@
     @apply text-[11px] font-medium leading-[13px];
   }
 
+  .tab {
+    @apply flex min-h-[50px] flex-1 items-center justify-around border-b border-light-400 bg-dark-100 text-light-400 data-[state=active]:border-light-100 data-[state=active]:text-light-100 !important;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 3px;
     height: 3px;

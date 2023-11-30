@@ -16,6 +16,8 @@ const ThreadCard = ({
   comments,
   isComment
 }: ThreadCardProps) => {
+  console.log(author);
+  
   return (
     <article className={`flex w-full py-3 ${isComment && 'pl-7'}`}>
       {/* Left */}
@@ -111,7 +113,7 @@ const ThreadCard = ({
         </div>
 
         <div className="flex gap-2 text-light-400">
-          {comments.length > 0 && (
+          {comments && comments.length > 0 && (
             <>
               <Link href={`/thread/${id}`}>
                 <p>

@@ -30,3 +30,9 @@ export const sidebarLinks = [
     label: 'Profile'
   }
 ]
+
+export const profileTabs = [
+  {value: 'threads', label: 'Hilos'},
+  {value: 'replies', label: 'Respuestas'},
+  {value: 'requests', label: 'Republicaciones'},
+]

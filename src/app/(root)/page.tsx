@@ -16,7 +16,9 @@ export default async function Home() {
       <Separator className="mt-4 bg-light-400" />
 
       {result?.threads.length === 0 ? (
-        <p className="text-light-400">Aún no hay lios</p>
+        <div className="flex h-[50vh] items-center justify-center">
+          <p className="text-light-400">Aún no hay hilos</p>
+        </div>
       ) : (
         <>
           {result?.threads.map(thread => (

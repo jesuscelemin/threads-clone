@@ -57,9 +57,28 @@ export interface ThreadCardProps {
 }
 
 export interface CommentProps {
-  threadId: string,
-  userImg: string,
-  author: string,
-  userId: string,
+  threadId: string
+  userImg: string
+  author: string
+  userId: string
   username: string
+}
+
+export interface ProfileInfoProps {
+  currentUserId: string
+  userId: string
+  name: string
+  image: string
+  username: string
+  bio: string
+}
+
+export interface ThreadsTabContentProps {
+  currentUserId: string
+  userId: string
+}
+
+export interface RepliesTabContentProps {
+  currentUserId: string
+  userId: string
 }

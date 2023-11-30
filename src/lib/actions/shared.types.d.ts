@@ -6,6 +6,10 @@ export interface CreateUserParams {
   password: string
 }
 
+export interface GetUserByIdParams {
+  userId: string
+}
+
 export interface LoginUserParams {
   email: string
   password: string

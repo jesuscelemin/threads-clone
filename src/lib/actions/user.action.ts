@@ -3,10 +3,15 @@
 import User from '@/models/user.model'
 import { connectToDB } from '../mongoose'
 import bcrypt from 'bcrypt'
-import { CreateUserParams, LoginUserParams, UpdateUserParams } from './shared.types'
+import {
+  CreateUserParams,
+  GetUserByIdParams,
+  LoginUserParams,
+  UpdateUserParams
+} from './shared.types'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
-
+import Thread from '@/models/thread.model'
 
 export async function getCurrentUser() {
   try {
@@ -25,6 +30,18 @@ export async function getCurrentUser() {
   } catch (error) {
     console.log(error)
     throw error
+  }
+}
+
+export async function getUserById(params: GetUserByIdParams) {
+  try {
+    await connectToDB()
+
+    const { userId } = params
+
+    return await User.findOne({ _id: userId })
+  } catch (error: any) {
+    throw new Error(`Error al buscar el usuario: ${error.message}`)
   }
 }
 
@@ -90,5 +107,30 @@ export async function loginUser(params: LoginUserParams) {
   } catch (error) {
     console.log(error)
     throw error
+  }
+}
+
+export async function getUserThreads(userId: string) {
+  try {
+    await connectToDB()
+
+    const threads = await User.findOne({ _id: userId }).populate({
+      path: 'threads',
+      model: Thread,
+      populate: {
+        path: 'children',
+        model: Thread,
+        populate: {
+          path: 'author',
+          model: User,
+          select: 'name username image _id'
+        }
+      }
+    })
+
+    return threads
+  } catch (error) {
+    console.error('Error mientras se buscaban los hilos:', error)
+    throw new Error('Imposible encontrar los hilos')
   }
 }
