@@ -3,6 +3,7 @@ import Avatar from '../shared/Avatar'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '../ui/button'
+import { getTimeStamp } from '@/lib/utils'
 
 const ThreadCard = ({
   id,
@@ -74,7 +75,7 @@ const ThreadCard = ({
           </Link>
 
           <div className="flex items-start gap-2">
-            <div className="text-light-400">19 sem</div>
+            <div className="text-light-400">{getTimeStamp(createdAt)}</div>
             <div className="text-light-100">
               <Button className="mt-[-.4rem] rounded-full p-2 hover:bg-dark-200">
                 <Image
