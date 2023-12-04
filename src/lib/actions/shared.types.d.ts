@@ -1,4 +1,5 @@
 import { IUser } from '@/models/user.model'
+import { SortOrder } from 'mongoose'
 
 export interface CreateUserParams {
   name: string
@@ -35,4 +36,12 @@ export interface AddCommentToThreadParams {
   image: string
   userId: string
   path: string
+}
+
+export interface GetUsersParams {
+  userId: string
+  searchString?: string
+  pageNumber?: number
+  pageSize?: number
+  sortBy?: SortOrder
 }

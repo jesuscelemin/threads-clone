@@ -6,12 +6,14 @@ import bcrypt from 'bcrypt'
 import {
   CreateUserParams,
   GetUserByIdParams,
+  GetUsersParams,
   LoginUserParams,
   UpdateUserParams
 } from './shared.types'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
 import Thread from '@/models/thread.model'
+import { FilterQuery } from 'mongoose'
 
 export async function getCurrentUser() {
   try {
@@ -132,5 +134,52 @@ export async function getUserThreads(userId: string) {
   } catch (error) {
     console.error('Error mientras se buscaban los hilos:', error)
     throw new Error('Imposible encontrar los hilos')
+  }
+}
+
+export async function getUsers({
+  userId,
+  searchString = '',
+  pageNumber = 1,
+  pageSize = 20,
+  sortBy = 'desc'
+}: GetUsersParams) {
+  try {
+    // Calculate the number of users to skip based on the page number and page size.
+    const skipAmount = (pageNumber - 1) * pageSize
+
+    // Create a case-insensitive regular expression for the provided search string.
+    const regex = new RegExp(searchString, 'i')
+
+    // Create an initial query object to filter users.
+    const query: FilterQuery<typeof User> = {
+      id: { $ne: userId } // Exclude the current user from the results.
+    }
+
+    // If the search string is not empty, add the $or operator to match either username or name fields.
+    if (searchString.trim() !== '') {
+      query.$or = [{ username: { $regex: regex } }, { name: { $regex: regex } }]
+    }
+
+    // Define the sort options for the fetched users based on createdAt field and provided sort order.
+    const sortOptions = { createdAt: sortBy }
+
+    const usersQuery = User.find(query)
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize)
+
+    // Count the total number of users that match the search criteria (without pagination).
+    const totalUsersCount = await User.countDocuments(query)
+
+    const users = await usersQuery.exec()
+
+    // Check if there are more users beyond the current page.
+    const isNext = totalUsersCount > skipAmount + users.length
+
+    return { users, isNext }
+  } catch (error) {
+    console.error('Error mientras se buscaban los usuarios:', error)
+    throw new Error('Imposible encontrar los usuarios')
   }
 }

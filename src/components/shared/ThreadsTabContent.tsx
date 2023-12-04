@@ -8,8 +8,6 @@ const ThreadsTabContent = async ({
   userId
 }: ThreadsTabContentProps) => {
   const result = await getUserThreads(userId)
-  console.log(result);
-  
 
   return (
     <section className="mt-4">

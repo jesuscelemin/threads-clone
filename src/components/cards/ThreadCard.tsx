@@ -16,8 +16,8 @@ const ThreadCard = ({
   comments,
   isComment
 }: ThreadCardProps) => {
-  console.log(author);
-  
+  const showUsers = new Set()
+
   return (
     <article className={`flex w-full py-3 ${isComment && 'pl-7'}`}>
       {/* Left */}
@@ -32,8 +32,37 @@ const ThreadCard = ({
             className="cursor-pointer rounded-full object-cover"
           />
         </Link>
-        <div className="relative mt-2 w-0.5 flex-1 rounded-full bg-neutral-800" />
-        {!isComment && <div className="text-light-100">Fotos</div>}
+        <div className="relative mt-2 w-0.5 flex-1 rounded-full bg-neutral-800 " />
+        {!isComment && comments?.length > 0 && (
+          <div className="mt-2 flex w-10 items-center justify-center">
+            <div
+              className={`${
+                showUsers.size > 1 && 'ml-[.7rem]'
+              } relative mb-[2px] h-5 w-5`}
+            >
+              {comments.slice(0, 2).map((comment, index) => {
+                const { _id, image } = comment.author
+
+                if (!showUsers.has(_id)) {
+                  showUsers.add(_id)
+
+                  return (
+                    <Image
+                      key={index}
+                      src={image}
+                      alt={`user_${index}`}
+                      fill
+                      className={`${
+                        showUsers.size > 1 && index === 0 && '-ml-3'
+                      } rounded-full border-2 border-dark-100 object-cover`}
+                    />
+                  )
+                }
+                return null
+              })}
+            </div>
+          </div>
+        )}
       </div>
       {/* Right */}
       <div className="flex h-full w-full flex-col items-start">

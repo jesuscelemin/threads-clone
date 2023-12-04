@@ -50,6 +50,7 @@ export interface ThreadCardProps {
   } | null
   comments: {
     author: {
+      _id: string,
       image: string
     }
   }[]
@@ -81,4 +82,11 @@ export interface ThreadsTabContentProps {
 export interface RepliesTabContentProps {
   currentUserId: string
   userId: string
+}
+
+export interface UserCardProps {
+  id: string
+  name: string
+  username: string
+  image: string
 }
