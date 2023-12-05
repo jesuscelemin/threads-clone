@@ -55,6 +55,8 @@ export interface ThreadCardProps {
     }
   }[]
   isComment?: boolean
+  initialLikes?: []
+  likes?: string[]
 }
 
 export interface CommentProps {

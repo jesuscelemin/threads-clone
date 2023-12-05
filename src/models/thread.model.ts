@@ -6,6 +6,7 @@ export interface IThread extends Document {
   image: string
   community: Schema.Types.ObjectId
   parentId: string
+  likes: Schema.Types.ObjectId[]
   children: Schema.Types.ObjectId[]
   createdAt: Date
 }
@@ -27,11 +28,17 @@ const ThreadSchema = new Schema<IThread>({
   parentId: {
     type: String
   },
-  children: [{ type: Schema.Types.ObjectId, ref: 'Thread'}],
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
+  children: [{ type: Schema.Types.ObjectId, ref: 'Thread' }],
   createdAt: {
     type: Date,
     default: Date.now
-  },
+  }
 })
 
 const Thread = models.Thread || model('Thread', ThreadSchema)

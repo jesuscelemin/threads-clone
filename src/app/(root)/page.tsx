@@ -33,6 +33,7 @@ export default async function Home() {
               author={thread.author}
               community={thread.community}
               comments={thread.children}
+              likes={thread.likes}
             />
           ))}
         </>

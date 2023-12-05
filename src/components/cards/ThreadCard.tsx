@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '../ui/button'
 import { getTimeStamp } from '@/lib/utils'
+import LikeButton from '../shared/LikeButton'
 
 const ThreadCard = ({
   id,
@@ -15,9 +16,12 @@ const ThreadCard = ({
   author,
   community,
   comments,
-  isComment
+  isComment,
+  initialLikes,
+  likes
 }: ThreadCardProps) => {
   const showUsers = new Set()
+  const isLiked = likes?.includes(currentUserId)
 
   return (
     <article className={`flex w-full py-3 ${isComment && 'pl-7'}`}>
@@ -33,7 +37,9 @@ const ThreadCard = ({
             className="cursor-pointer rounded-full object-cover"
           />
         </Link>
-        <div className="relative mt-2 w-0.5 flex-1 rounded-full bg-neutral-800 " />
+        {comments && comments.length > 0 && (
+          <div className="relative mt-2 w-0.5 flex-1 rounded-full bg-neutral-800 " />
+        )}
         {!isComment && comments?.length > 0 && (
           <div className="mt-2 flex w-10 items-center justify-center">
             <div
@@ -102,15 +108,12 @@ const ThreadCard = ({
         )}
 
         <div className="mt-3 flex gap-3.5">
-          <Button className="rounded-full p-2 hover:bg-dark-200">
-            <Image
-              src="/assets/love.svg"
-              alt="love"
-              width={24}
-              height={24}
-              className="cursor-pointer object-contain "
-            />
-          </Button>
+          <LikeButton
+            threadId={JSON.stringify(id)}
+            userId={JSON.stringify(currentUserId)}
+            isLiked={isLiked!}
+          />
+
           <Button className="rounded-full p-2 hover:bg-dark-200">
             <Link href={`/thread/${id}`}>
               <Image
@@ -150,9 +153,13 @@ const ThreadCard = ({
                   {comments.length} respuest{comments.length > 1 ? 'as' : 'a'}
                 </p>
               </Link>
-              <span>·</span>
-              <div className="">10 Me gusta</div>
             </>
+          )}
+          {comments && comments.length > 0 && likes && likes.length > 0 && (
+            <span>·</span>
+          )}
+          {likes && likes.length > 0 && (
+            <div className="">{likes?.length} Me gusta</div>
           )}
         </div>
       </div>

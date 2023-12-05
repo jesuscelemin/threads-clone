@@ -32,6 +32,7 @@ const RepliesTabContent = async ({
                 }}
                 community={comment.community}
                 comments={comment.children}
+                likes={comment.likes}
                 isComment
               />
             ))}

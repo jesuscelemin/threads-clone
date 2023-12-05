@@ -163,4 +163,64 @@ export async function getAllChildThreads(threadId: string): Promise<any[]> {
   }
 }
 
+export async function likeThread(
+  threadId: string,
+  userId: string,
+  path: string
+) {
+  try {
+    await connectToDB()
 
+    const thread = await Thread.findById(threadId)
+
+    if (!thread) {
+      throw new Error('Hilo no encontrado')
+    }
+
+    // Check if the user has already liked the thread
+    const isLiked = thread.likes.includes(userId)
+
+    let updateQuery = {}
+
+    if (isLiked) {
+      // If we already liked it, the like will be removed
+      updateQuery = { $pull: { likes: userId } }
+    } else {
+      // If we didn't like it, the like will be added
+      updateQuery = { $addToSet: { likes: userId } }
+    }
+
+    // Save the updated thread
+    await Thread.findByIdAndUpdate(
+      threadId,
+      updateQuery,
+      { new: true }
+    )
+
+    revalidatePath(path)
+  } catch (error) {
+    console.error('Error mientras se buscaba el hilo:', error)
+    throw new Error('Imposible encontrar el hilo')
+  }
+}
+
+export async function getThreadLikes(threadId: string) {
+  try {
+    await connectToDB()
+
+    const thread = await Thread.findById(threadId)
+    console.log(thread);
+
+    if (!thread) {
+      throw new Error('Hilo no encontrado')
+    }
+
+    const initialLikes = thread ? thread.likes.length : 0
+    
+
+    return initialLikes
+  } catch (error) {
+    console.error('Error mientras se buscaba el hilo:', error)
+    throw new Error('Imposible encontrar el hilo')
+  }
+}

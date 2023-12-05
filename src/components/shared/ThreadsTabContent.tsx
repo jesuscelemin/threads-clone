@@ -34,6 +34,7 @@ const ThreadsTabContent = async ({
                 createdAt={thread.createdAt}
                 comments={thread.comments}
                 community={thread.community}
+                likes={thread.likes}
               />
 
               <Separator className="mt-4 bg-light-400/50" />
