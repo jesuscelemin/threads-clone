@@ -41,7 +41,9 @@ export async function getUserById(params: GetUserByIdParams) {
 
     const { userId } = params
 
-    return await User.findOne({ _id: userId })
+    const currentUser = await User.findOne({ _id: userId }).lean()
+
+    return JSON.parse(JSON.stringify(currentUser))
   } catch (error: any) {
     throw new Error(`Error al buscar el usuario: ${error.message}`)
   }
@@ -77,8 +79,6 @@ export async function updateUser(params: UpdateUserParams) {
     connectToDB()
 
     const { userId, updateData, path } = params
-
-    console.log(userId, updateData, path)
 
     await User.findByIdAndUpdate({ _id: userId }, updateData, { new: true })
 
@@ -116,19 +116,27 @@ export async function getUserThreads(userId: string) {
   try {
     await connectToDB()
 
-    const threads = await User.findOne({ _id: userId }).populate({
-      path: 'threads',
-      model: Thread,
-      populate: {
-        path: 'children',
-        model: Thread,
-        populate: {
-          path: 'author',
-          model: User,
-          select: 'name username image _id'
-        }
-      }
-    })
+    const threads = await User.findOne({ _id: userId })
+      .populate({
+        path: 'threads',
+        populate: [
+          {
+            path: 'author', // Populate the author field within children
+            model: User,
+            select: '_id name username parentId image' // Select only _id and username fields of the author
+          },
+          {
+            path: 'children', // Populate the children field within children
+            model: Thread, // The model of the nested children (assuming it's the same "Thread" model)
+            populate: {
+              path: 'author', // Populate the author field within nested children
+              model: User,
+              select: '_id name username parentId image' // Select only _id and username fields of the author
+            }
+          }
+        ]
+      })
+      .exec()
 
     return threads
   } catch (error) {

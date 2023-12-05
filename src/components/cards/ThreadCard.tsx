@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { Button } from '../ui/button'
 import { getTimeStamp } from '@/lib/utils'
 import LikeButton from '../shared/LikeButton'
+import RepostButton from '../shared/RepostButton'
+import MoreButton from '../shared/MoreButton'
 
 const ThreadCard = ({
   id,
@@ -17,6 +19,7 @@ const ThreadCard = ({
   community,
   comments,
   isComment,
+  isProfile,
   initialLikes,
   likes
 }: ThreadCardProps) => {
@@ -24,7 +27,9 @@ const ThreadCard = ({
   const isLiked = likes?.includes(currentUserId)
 
   return (
-    <article className={`flex w-full py-3 ${isComment && 'pl-7'}`}>
+    <article
+      className={`flex w-full py-3 ${isComment && !isProfile && 'pl-7'}`}
+    >
       {/* Left */}
       <div className="flex h-auto flex-col items-center justify-between pr-4">
         <Link
@@ -78,19 +83,21 @@ const ThreadCard = ({
             <h2 className="base-semibold cursor-pointer text-light-100">
               {author.name}
             </h2>
+            {isComment && (
+              <p className="text-light-400">Respondiendo a @{author.name}</p>
+            )}
           </Link>
 
           <div className="flex items-start gap-2">
             <div className="text-light-400">{getTimeStamp(createdAt)}</div>
             <div className="text-light-100">
-              <Button className="mt-[-.4rem] rounded-full p-2 hover:bg-dark-200">
-                <Image
-                  src="/assets/more.svg"
-                  alt="more"
-                  width={20}
-                  height={20}
-                />
-              </Button>
+              <MoreButton
+                currentUserId={currentUserId}
+                authorId={JSON.stringify(author._id)}
+                threadId={JSON.stringify(id)}
+                parentId={JSON.stringify(parentId)}
+                isComment={isComment!}
+              />
             </div>
           </div>
         </div>
@@ -125,16 +132,12 @@ const ThreadCard = ({
               />
             </Link>
           </Button>
-          <Button className="rounded-full p-2 hover:bg-dark-200">
-            <Image
-              src="/assets/reply.svg"
-              alt="reply"
-              width={24}
-              height={24}
-              className="cursor-pointer object-contain "
-            />
-          </Button>
-          <Button className="rounded-full p-2 hover:bg-dark-200">
+          <RepostButton
+            threadId={JSON.stringify(id)}
+            userId={JSON.stringify(currentUserId)}
+          />
+
+          {/* <Button className="rounded-full p-2 hover:bg-dark-200">
             <Image
               src="/assets/share.svg"
               alt="share"
@@ -142,7 +145,7 @@ const ThreadCard = ({
               height={24}
               className="cursor-pointer object-contain "
             />
-          </Button>
+          </Button> */}
         </div>
 
         <div className="flex gap-2 text-light-400">
@@ -158,9 +161,7 @@ const ThreadCard = ({
           {comments && comments.length > 0 && likes && likes.length > 0 && (
             <span>·</span>
           )}
-          {likes && likes.length > 0 && (
-            <div className="">{likes?.length} Me gusta</div>
-          )}
+          {likes && likes.length > 0 && <div>{likes?.length} Me gusta</div>}
         </div>
       </div>
     </article>

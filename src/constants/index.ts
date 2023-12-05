@@ -34,5 +34,5 @@ export const sidebarLinks = [
 export const profileTabs = [
   {value: 'threads', label: 'Hilos'},
   {value: 'replies', label: 'Respuestas'},
-  {value: 'requests', label: 'Republicaciones'},
+  {value: 'reposts', label: 'Republicaciones'},
 ]

@@ -45,3 +45,11 @@ export interface GetUsersParams {
   pageSize?: number
   sortBy?: SortOrder
 }
+
+export interface RepostThreadParams {
+  originalThreadId: string
+  userId: string
+  path: string
+}
+
+

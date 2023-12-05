@@ -89,7 +89,7 @@ const SidebarLeft = ({ user }: SidebarLeftProps) => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="absolute left-[-1rem] top-[-9rem] min-w-[160px] border border-dark-500 bg-dark-400 lg:left-[-5rem]">
-          <DropdownMenuItem className="cursor-pointer gap-4 text-light-200 outline-none focus:bg-dark-500 ">
+          <DropdownMenuItem className="cursor-pointer gap-4 text-light-200 outline-none focus:bg-dark-500">
             <form action={signOut}>
               <Button type="submit">Cerrar sesión</Button>
             </form>

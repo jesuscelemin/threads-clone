@@ -1,7 +1,11 @@
 'use server'
 
 import { connectToDB } from '../mongoose'
-import { AddCommentToThreadParams, CreateThreadParams } from './shared.types'
+import {
+  AddCommentToThreadParams,
+  CreateThreadParams,
+  RepostThreadParams
+} from './shared.types'
 import { revalidatePath } from 'next/cache'
 import Thread from '@/models/thread.model'
 import User from '@/models/user.model'
@@ -26,7 +30,7 @@ export async function createThread(params: CreateThreadParams) {
 
     revalidatePath(path)
   } catch (error: any) {
-    throw new Error(`Error creatndo el hilo: ${error.message}`)
+    throw new Error(`Error creando el hilo: ${error.message}`)
   }
 }
 
@@ -44,7 +48,11 @@ export async function getThreads(pageNumber = 1, pageSize = 20) {
       .sort({ createdAt: 'desc' })
       .skip(skipAmount)
       .limit(pageSize)
-      .populate({ path: 'author', model: User })
+      .populate({
+        path: 'author',
+        model: User,
+        select: '_id name username image'
+      }) // Populate the author field with _id and username
       .populate({
         path: 'children',
         populate: {
@@ -147,7 +155,10 @@ export async function getAllChildThreads(threadId: string): Promise<any[]> {
   try {
     await connectToDB()
 
-    const childThreads = await Thread.find({ parentId: threadId })
+    const childThreads = await Thread.find({
+      parentId: threadId,
+      repostedFrom: null
+    })
 
     const descendantThreads = []
 
@@ -191,11 +202,7 @@ export async function likeThread(
     }
 
     // Save the updated thread
-    await Thread.findByIdAndUpdate(
-      threadId,
-      updateQuery,
-      { new: true }
-    )
+    await Thread.findByIdAndUpdate(threadId, updateQuery, { new: true })
 
     revalidatePath(path)
   } catch (error) {
@@ -209,18 +216,105 @@ export async function getThreadLikes(threadId: string) {
     await connectToDB()
 
     const thread = await Thread.findById(threadId)
-    console.log(thread);
 
     if (!thread) {
       throw new Error('Hilo no encontrado')
     }
 
     const initialLikes = thread ? thread.likes.length : 0
-    
 
     return initialLikes
   } catch (error) {
     console.error('Error mientras se buscaba el hilo:', error)
     throw new Error('Imposible encontrar el hilo')
+  }
+}
+
+export async function repostThread(params: RepostThreadParams) {
+  try {
+    await connectToDB()
+
+    const { originalThreadId, userId, path } = params
+
+    const originalThread = await Thread.findById(originalThreadId)
+
+    if (!originalThread) {
+      throw new Error('Hilo original no encontrado')
+    }
+
+    const repostedThread = await Thread.create({
+      text: originalThread.text,
+      author: userId,
+      image: originalThread.image,
+      repostedFrom: userId,
+      parentId: originalThread.parentId || originalThread._id
+    })
+
+    // Save the reposted thread to the database
+    await repostedThread.save()
+
+    revalidatePath(path)
+  } catch (error: any) {
+    throw new Error(`Error realizando el repost del hilo: ${error.message}`)
+  }
+}
+
+export async function getRepostsByUser(userId: string) {
+  try {
+    await connectToDB()
+
+    const reposts = await Thread.find({ repostedFrom: userId }).populate({
+      path: 'author',
+      model: User,
+      select: 'name username image _id'
+    })
+
+    return reposts
+  } catch (error) {
+    console.error('Error mientras se buscaba el hilo:', error)
+    throw new Error('Imposible encontrar el hilo')
+  }
+}
+
+export async function deleteThread(id: string, path: string): Promise<void> {
+  try {
+    connectToDB()
+
+    // Find the thread to be deleted (the main thread)
+    const mainThread = await Thread.findById(id).populate('author')
+
+    if (!mainThread) {
+      throw new Error('Thread not found')
+    }
+
+    // Fetch all child threads and their descendants recursively
+    const descendantThreads = await getAllChildThreads(id)
+
+    // Get all descendant thread IDs including the main thread ID and child thread IDs
+    const descendantThreadIds = [
+      id,
+      ...descendantThreads.map(thread => thread._id)
+    ]
+
+    // Extract the authorIds and communityIds to update User and Community models respectively
+    const uniqueAuthorIds = new Set(
+      [
+        ...descendantThreads.map(thread => thread.author?._id?.toString()), // Use optional chaining to handle possible undefined values
+        mainThread.author?._id?.toString()
+      ].filter(id => id !== undefined)
+    )
+
+    // Recursively delete child threads and their descendants
+    await Thread.deleteMany({ _id: { $in: descendantThreadIds } })
+
+    // Update User model
+    await User.updateMany(
+      { _id: { $in: Array.from(uniqueAuthorIds) } },
+      { $pull: { threads: { $in: descendantThreadIds } } }
+    )
+
+    revalidatePath(path)
+  } catch (error: any) {
+    throw new Error(`Error al borrar el hilo: ${error.message}`)
   }
 }
