@@ -11,6 +11,7 @@ export interface IUser extends Document {
   threads: Schema.Types.ObjectId[]
   onboarded: boolean
   following: Schema.Types.ObjectId[]
+  followers: Schema.Types.ObjectId[]
   createdAt: Date
 }
 
@@ -25,6 +26,7 @@ const UserSchema = new Schema<IUser>({
   threads: [{ type: Schema.Types.ObjectId, ref: 'Thread' }],
   onboarded: { type: Boolean, default: false },
   following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdAt: {
     type: Date,
     default: Date.now

@@ -5,8 +5,8 @@ import { connectToDB } from '../mongoose'
 import bcrypt from 'bcrypt'
 import {
   CreateUserParams,
+  GetSearchUsersParams,
   GetUserByIdParams,
-  GetUsersParams,
   LoginUserParams,
   UpdateUserParams
 } from './shared.types'
@@ -146,13 +146,13 @@ export async function getUserThreads(userId: string) {
   }
 }
 
-export async function getUsers({
+export async function getSearchUsers({
   userId,
   searchString = '',
   pageNumber = 1,
   pageSize = 20,
   sortBy = 'desc'
-}: GetUsersParams) {
+}: GetSearchUsersParams) {
   try {
     if (searchString.trim() === '') {
       return { users: [], isNext: false }
@@ -225,25 +225,29 @@ export async function getActivity(userId: string) {
 
 export async function followUser(
   currentUserId: string,
-  userIdToFollow: string
-) {
+  userIdToFollow: string,
+  path: string
+): Promise<void | null> {
   try {
     await connectToDB()
 
-    const currentUser = await User.findById(currentUserId)
+    const currentUser = await User.findByIdAndUpdate(
+      currentUserId,
+      { $addToSet: { following: userIdToFollow } },
+      { new: true }
+    )
 
-    if (!currentUser) {
+    const userToFollow = await User.findByIdAndUpdate(
+      userIdToFollow,
+      { $addToSet: { followers: currentUserId } },
+      { new: true }
+    )
+
+    if (!currentUser || !userToFollow) {
       throw new Error('Usuario no encontrado')
     }
 
-    if (currentUser.following.includes(userIdToFollow)) {
-      return null
-    }
-
-    currentUser.following.push(userIdToFollow)
-    await currentUser.save()
-
-    return currentUser
+    revalidatePath(path)
   } catch (error: any) {
     throw new Error(`Error al seguir al usuario: ${error.message}`)
   }
@@ -251,23 +255,29 @@ export async function followUser(
 
 export async function unfollowUser(
   currentUserId: string,
-  userIdToUnfollow: string
-) {
+  userIdToUnfollow: string,
+  path: string
+): Promise<void | null> {
   try {
     await connectToDB()
 
-    const currentUser = await User.findById(currentUserId)
+    const currentUser = await User.findByIdAndUpdate(
+      currentUserId,
+      { $pull: { following: userIdToUnfollow } },
+      { new: true }
+    )
 
-    if (!currentUser) {
+    const userToUnfollow = await User.findByIdAndUpdate(
+      userIdToUnfollow,
+      { $pull: { followers: currentUserId } },
+      { new: true }
+    )
+
+    if (!currentUser || !userToUnfollow) {
       throw new Error('Usuario no encontrado')
     }
 
-    currentUser.following = currentUser.following.filter(
-      (id: string) => id !== userIdToUnfollow
-    )
-    await currentUser.save()
-
-    return currentUser
+    revalidatePath(path)
   } catch (error: any) {
     throw new Error(`Error al dejar de seguir al usuario: ${error.message}`)
   }
@@ -278,19 +288,45 @@ export async function isUserFollowing(
   targetUserId: string
 ): Promise<boolean> {
   try {
-    connectToDB()
+    await connectToDB()
 
     const currentUser = await User.findById(currentUserId)
+
     if (!currentUser) {
-      throw new Error('Usuario actual no encontrado')
+      throw new Error('Usuario no encontrado')
     }
 
-    const isFollowing = currentUser.following.includes(targetUserId)
-
-    return isFollowing
+    return currentUser.following.includes(targetUserId)
   } catch (error: any) {
     throw new Error(
       `Error al verificar si el usuario sigue a otro usuario: ${error.message}`
     )
+  }
+}
+
+export async function getUsers(userId: string) {
+  try {
+    await connectToDB()
+
+    const users = await User.find({ _id: { $ne: userId } })
+
+    return users
+  } catch (error: any) {
+    throw new Error(`Error al encontrar los usuarios: ${error.message}`)
+  }
+}
+
+export async function getUsersNotFollowing(userIdToExclude: string) {
+  try {
+    await connectToDB()
+
+    const usersNotFollowing = await User.find({
+      _id: { $ne: userIdToExclude },
+      followers: { $ne: userIdToExclude }
+    })
+
+    return usersNotFollowing
+  } catch (error: any) {
+    throw new Error(`Error al obtener usuarios: ${error.message}`)
   }
 }

@@ -126,6 +126,7 @@ export interface RepliesTabContentProps {
 }
 
 export interface UserCardProps {
+  currentUserId: string
   id: string
   name: string
   username: string

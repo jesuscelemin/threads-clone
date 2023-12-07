@@ -37,7 +37,7 @@ export interface AddCommentToThreadParams {
   path: string
 }
 
-export interface GetUsersParams {
+export interface GetSearchUsersParams {
   userId: string
   searchString?: string
   pageNumber?: number

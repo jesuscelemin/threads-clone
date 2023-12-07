@@ -2,15 +2,23 @@
 
 import { UserCardProps } from '@/types'
 import Avatar from '../shared/Avatar'
-import { Button } from '../ui/button'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import FollowButton from '../shared/FollowButton'
 
-const UserCard = ({ id, name, username, image }: UserCardProps) => {
-  const router = useRouter()
+const UserCard = ({
+  currentUserId,
+  id,
+  name,
+  username,
+  image
+}: UserCardProps) => {
 
   return (
     <article className="flex justify-between">
-      <div className='flex gap-4'>
+      <Link
+        href={`/profile/${JSON.parse(id)}`}
+        className="flex cursor-pointer gap-4"
+      >
         <div className="relative h-12 w-12">
           <Avatar src={image} isFill className="rounded-full object-cover" />
         </div>
@@ -19,15 +27,12 @@ const UserCard = ({ id, name, username, image }: UserCardProps) => {
           <h3 className="base-semibold text-light-100">{name}</h3>
           <p className="text-light-400">{username}</p>
         </div>
-      </div>
+      </Link>
 
-      <Button
-        variant="outline"
-        className="text-light-100"
-        onClick={() => router.push(`/profile/${JSON.parse(id)}`)}
-      >
-        Ver
-      </Button>
+      <FollowButton
+        currentUserId={JSON.parse(currentUserId)}
+        userId={JSON.parse(id)}
+      />
     </article>
   )
 }

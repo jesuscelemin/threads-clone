@@ -1,7 +1,7 @@
 import UserCard from '@/components/cards/UserCard'
 import SearchBar from '@/components/shared/SearchBar'
 import { Separator } from '@/components/ui/separator'
-import { getCurrentUser, getUsers } from '@/lib/actions/user.action'
+import { getCurrentUser, getSearchUsers,  } from '@/lib/actions/user.action'
 import React from 'react'
 
 const page = async ({
@@ -9,10 +9,10 @@ const page = async ({
 }: {
   searchParams: { [key: string]: string | undefined }
 }) => {
-  const user = await getCurrentUser()
+  const currentUser = await getCurrentUser()
 
-  const result = await getUsers({
-    userId: user._id,
+  const result = await getSearchUsers({
+    userId: currentUser._id,
     searchString: searchParams.q,
     pageNumber: searchParams.page ? +searchParams.page : 1,
     pageSize: 25
@@ -34,6 +34,7 @@ const page = async ({
             {result.users.map(user => (
               <React.Fragment key={user._id}>
                 <UserCard
+                  currentUserId={JSON.stringify(currentUser._id)}
                   id={JSON.stringify(user._id)}
                   name={user.name}
                   username={user.username}
