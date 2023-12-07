@@ -28,15 +28,15 @@ const MoreButton = ({
   const router = useRouter()
 
   const handleRemoveThread = async () => {
-     await deleteThread(JSON.parse(threadId), pathname)
-     if (!parentId || !isComment) {
-       router.push('/')
-     }
+    await deleteThread(JSON.parse(threadId), pathname)
+    if (!parentId || !isComment) {
+      router.push('/')
+    }
   }
 
   return (
     <>
-      {currentUserId && (
+      {currentUserId === JSON.parse(authorId) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="relative">
             <div className="mt-[-.4rem] cursor-pointer rounded-full p-2 outline-none hover:bg-dark-200 focus:bg-dark-500">

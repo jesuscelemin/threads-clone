@@ -9,13 +9,12 @@ const ThreadsTabContent = async ({
   userId
 }: ThreadsTabContentProps) => {
   const result = await getUserThreads(userId)
-  const threads = result.threads || []
 
   return (
     <div className="mt-4 w-full">
-      {threads.length > 0 ? (
+      {result.threads.length > 0 ? (
         <>
-          {threads.map((thread: any) => (
+          {result.threads.map((thread: any) => (
             <React.Fragment key={thread._id}>
               <ThreadCard
                 id={thread._id}
@@ -24,17 +23,18 @@ const ThreadsTabContent = async ({
                 text={thread.text}
                 image={thread.image}
                 author={{
+                  username: thread.author.username,
                   name: thread.author.name,
                   image: thread.author.image,
-                  _id: thread.author.id
+                  _id: thread.author._id
                 }}
                 createdAt={thread.createdAt}
-                comments={thread.comments}
-                community={thread.community}
+                comments={thread.children}
                 likes={thread.likes}
+                isProfile
               />
 
-              <Separator className="mt-4 bg-light-400/50" />
+              <Separator className="my-4 bg-light-400/50" />
             </React.Fragment>
           ))}
         </>

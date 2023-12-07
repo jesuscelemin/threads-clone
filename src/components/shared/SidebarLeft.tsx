@@ -18,6 +18,10 @@ import { signOut } from '@/lib/actions/signout.action'
 const SidebarLeft = ({ user }: SidebarLeftProps) => {
   const pathname = usePathname()
 
+  const handleLogout = async () => {
+    await signOut()
+  }
+
   return (
     <section className="custom-scrollbar sticky left-0 top-0 z-20 flex h-screen w-fit flex-col justify-between overflow-auto border-r border-r-dark-400 bg-dark-100 max-md:hidden">
       <Link
@@ -90,9 +94,7 @@ const SidebarLeft = ({ user }: SidebarLeftProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="absolute left-[-1rem] top-[-9rem] min-w-[160px] border border-dark-500 bg-dark-400 lg:left-[-5rem]">
           <DropdownMenuItem className="cursor-pointer gap-4 text-light-200 outline-none focus:bg-dark-500">
-            <form action={signOut}>
-              <Button type="submit">Cerrar sesión</Button>
-            </form>
+            <Button onClick={handleLogout}>Cerrar sesión</Button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

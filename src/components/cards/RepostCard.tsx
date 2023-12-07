@@ -1,14 +1,14 @@
-import { ThreadCardProps } from '@/types'
-import Avatar from '../shared/Avatar'
 import Link from 'next/link'
+import Avatar from '../shared/Avatar'
 import Image from 'next/image'
-import { Button } from '../ui/button'
-import { getTimeStamp } from '@/lib/utils'
+import { RepostCardProps } from '@/types'
 import LikeButton from '../shared/LikeButton'
+import { Button } from '../ui/button'
 import RepostButton from '../shared/RepostButton'
 import MoreButton from '../shared/MoreButton'
+import { getTimeStamp } from '@/lib/utils'
 
-const ThreadCard = ({
+const RepostCard = ({
   id,
   currentUserId,
   parentId,
@@ -18,24 +18,22 @@ const ThreadCard = ({
   author,
   comments,
   isComment,
-  isProfile,
-  likes
-}: ThreadCardProps) => {
+  likes,
+  repostedFrom
+}: RepostCardProps) => {
   const showUsers = new Set()
   const isLiked = likes?.includes(currentUserId)
 
   return (
-    <article
-      className={`flex w-full py-3 ${isComment && !isProfile && 'pl-7'}`}
-    >
+    <article className="flex w-full py-3">
       {/* Left */}
       <div className="flex h-auto flex-col items-center justify-between pr-4">
         <Link
-          href={`/profile/${author._id}`}
+          href={`/profile/${repostedFrom._id}`}
           className="relative h-[36px] w-[36px]"
         >
           <Avatar
-            src={author.image}
+            src={repostedFrom.image}
             isFill
             className="cursor-pointer rounded-full object-cover"
           />
@@ -43,7 +41,7 @@ const ThreadCard = ({
         {comments && comments.length > 0 && (
           <div className="relative mt-2 w-0.5 flex-1 rounded-full bg-neutral-800 " />
         )}
-        {!isComment && comments?.length > 0 && (
+        {comments?.length > 0 && (
           <div className="mt-2 flex w-10 items-center justify-center">
             <div
               className={`${
@@ -74,12 +72,13 @@ const ThreadCard = ({
           </div>
         )}
       </div>
+
       {/* Right */}
       <div className="flex h-full w-full flex-col items-start">
         <div className="flex w-full items-start justify-between">
-          <Link href={`/profile/${author._id}`}>
+          <Link href={`/profile/${repostedFrom._id}`}>
             <h2 className="base-semibold cursor-pointer text-light-100">
-              {author.name}
+              {repostedFrom.username}
             </h2>
           </Link>
 
@@ -88,7 +87,7 @@ const ThreadCard = ({
             <div className="text-light-100">
               <MoreButton
                 currentUserId={currentUserId}
-                authorId={JSON.stringify(author._id)}
+                authorId={JSON.stringify(repostedFrom._id)}
                 threadId={JSON.stringify(id)}
                 parentId={JSON.stringify(parentId)}
                 isComment={isComment!}
@@ -96,19 +95,75 @@ const ThreadCard = ({
             </div>
           </div>
         </div>
-        <p className="mt-1 text-light-100">{text}</p>
-        {image && (
-          <div className="mt-2">
-            <Image
-              src={image}
-              alt="Image"
-              height={366}
-              width={650}
-              className="rounded-lg object-cover"
-            />
-          </div>
-        )}
 
+        {/* Content */}
+        <div className="mt-2 w-full border-2 border-dark-400 p-4">
+          <div className="flex w-full items-start">
+            {/* Left */}
+            <Link
+              href={`/profile/${author._id}`}
+              className="relative h-[36px] w-[36px]"
+            >
+              <Avatar
+                src={author.image}
+                isFill
+                className="cursor-pointer rounded-full object-cover"
+              />
+            </Link>
+
+            {/* Right */}
+            <div className="flex h-full w-full flex-col items-start pl-4">
+              <div className="flex w-full items-start justify-between">
+                <Link href={`/profile/${author._id}`}>
+                  <h2 className="base-semibold cursor-pointer text-light-100">
+                    {author.username}
+                  </h2>
+                </Link>
+
+                <div className="text-light-400">
+                  {getTimeStamp(parentId?.createdAt)}
+                </div>
+              </div>
+
+              {/* Content */}
+              <p className="mt-1 text-light-100">{text}</p>
+              {image && (
+                <div className="mt-2">
+                  <Image
+                    src={image}
+                    alt="Image"
+                    height={366}
+                    width={650}
+                    className="rounded-lg object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Counts */}
+              <div className="mt-4 flex gap-2 text-light-400">
+                {parentId?.children && parentId?.children.length > 0 && (
+                  <>
+                    <Link href={`/thread/${id}`}>
+                      <p>
+                        {parentId?.children.length} respuest
+                        {parentId?.children.length > 1 ? 'as' : 'a'}
+                      </p>
+                    </Link>
+                  </>
+                )}
+                {parentId?.children &&
+                  parentId?.children.length > 0 &&
+                  parentId?.likes &&
+                  parentId?.likes.length > 0 && <span>·</span>}
+                {parentId?.likes && parentId?.likes.length > 0 && (
+                  <div>{parentId?.likes?.length} Me gusta</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Buttons */}
         <div className="mt-3 flex gap-3.5">
           <LikeButton
             threadId={JSON.stringify(id)}
@@ -133,6 +188,7 @@ const ThreadCard = ({
           />
         </div>
 
+        {/* Counts */}
         <div className="flex gap-2 text-light-400">
           {comments && comments.length > 0 && (
             <>
@@ -152,4 +208,4 @@ const ThreadCard = ({
     </article>
   )
 }
-export default ThreadCard
+export default RepostCard

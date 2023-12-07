@@ -8,7 +8,7 @@ const page = async ({ params }: { params: { id: string } }) => {
   const user = await getCurrentUser()
   if (!user) return null
 
-  const userInfo = await getUserById({ userId: params.id }) 
+  const userInfo = await getUserById({ userId: params.id })
 
   return (
     <section>

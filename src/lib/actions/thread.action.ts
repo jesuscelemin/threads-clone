@@ -19,8 +19,7 @@ export async function createThread(params: CreateThreadParams) {
     const createThread = await Thread.create({
       text,
       author,
-      image,
-      community: null
+      image
     })
 
     // Update user model
@@ -43,7 +42,14 @@ export async function getThreads(pageNumber = 1, pageSize = 20) {
 
     // Get the threads that have no parents (top-level threads...) threads that are not comments.
     const threads = await Thread.find({
-      parentId: { $in: [null, undefined] }
+      $or: [
+        {
+          parentId: { $in: [null, undefined] }
+        }, // Threads with no parentId (comments)
+        {
+          repostedFrom: { $ne: null }
+        } // Threads with repostedFrom no null
+      ]
     })
       .sort({ createdAt: 'desc' })
       .skip(skipAmount)
@@ -56,15 +62,28 @@ export async function getThreads(pageNumber = 1, pageSize = 20) {
       .populate({
         path: 'children',
         populate: {
-          path: 'author', // Populate the author field within children
+          path: 'author',
           model: User,
-          select: '_id name username parentId image' // Select only _id and username fields of the author
+          select: '_id name username image'
         }
+      })
+      .populate({
+        path: 'parentId',
+        model: Thread,
+        select: 'likes children createdAt'
+      })
+      .populate({
+        path: 'repostedFrom',
+        model: User,
+        select: '_id name username image'
       })
       .exec()
 
     const totalThreadsCount = await Thread.countDocuments({
-      parentId: { $in: [null, undefined] }
+      $or: [
+        { parentId: { $in: [null, undefined] } },
+        { repostedFrom: { $ne: null } }
+      ]
     }) // Get the total count of threads
 
     const isNext = totalThreadsCount > skipAmount + threads.length
@@ -87,6 +106,16 @@ export async function getThreadById(threadId: string) {
         select: '_id name username image'
       }) // Populate the author field with _id and username
       .populate({
+        path: 'parentId',
+        model: Thread,
+        select: 'likes children createdAt'
+      })
+      .populate({
+        path: 'repostedFrom',
+        model: User,
+        select: '_id name username image'
+      })
+      .populate({
         path: 'children', // Populate the children field
         populate: [
           {
@@ -101,6 +130,16 @@ export async function getThreadById(threadId: string) {
               path: 'author', // Populate the author field within nested children
               model: User,
               select: '_id name username parentId image' // Select only _id and username fields of the author
+            }
+          },
+          {
+            path: 'parentId',
+            model: Thread,
+            select: '_id author',
+            populate: {
+              path: 'author',
+              model: User,
+              select: '_id name username image'
             }
           }
         ]
@@ -158,6 +197,10 @@ export async function getAllChildThreads(threadId: string): Promise<any[]> {
     const childThreads = await Thread.find({
       parentId: threadId,
       repostedFrom: null
+    }).populate({
+      path: 'author',
+      model: User,
+      select: '_id name username image'
     })
 
     const descendantThreads = []
@@ -244,7 +287,7 @@ export async function repostThread(params: RepostThreadParams) {
 
     const repostedThread = await Thread.create({
       text: originalThread.text,
-      author: userId,
+      author: originalThread.author._id,
       image: originalThread.image,
       repostedFrom: userId,
       parentId: originalThread.parentId || originalThread._id
@@ -263,11 +306,21 @@ export async function getRepostsByUser(userId: string) {
   try {
     await connectToDB()
 
-    const reposts = await Thread.find({ repostedFrom: userId }).populate({
-      path: 'author',
-      model: User,
-      select: 'name username image _id'
-    })
+    const reposts = await Thread.find({ repostedFrom: userId })
+      .populate({
+        path: 'author',
+        model: User,
+        select: 'name username image _id'
+      })
+      .populate({
+        path: 'children',
+        model: Thread,
+        populate: {
+          path: 'author', // Populate the author field within nested children
+          model: User,
+          select: '_id name username parentId image' // Select only _id and username fields of the author
+        }
+      })
 
     return reposts
   } catch (error) {
@@ -296,7 +349,7 @@ export async function deleteThread(id: string, path: string): Promise<void> {
       ...descendantThreads.map(thread => thread._id)
     ]
 
-    // Extract the authorIds and communityIds to update User and Community models respectively
+    // Extract the authorIds to update User model
     const uniqueAuthorIds = new Set(
       [
         ...descendantThreads.map(thread => thread.author?._id?.toString()), // Use optional chaining to handle possible undefined values
@@ -316,5 +369,43 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     revalidatePath(path)
   } catch (error: any) {
     throw new Error(`Error al borrar el hilo: ${error.message}`)
+  }
+}
+
+export async function getChildThreadsByAuthorId(
+  authorId: string,
+  pageNumber = 1,
+  pageSize = 20
+) {
+  try {
+    await connectToDB()
+    
+    
+    const skipAmount = (pageNumber - 1) * pageSize
+
+    const threads = await Thread.find()
+      .sort({ createdAt: 'desc' })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .populate({
+        path: 'author',
+        model: User,
+        select: '_id name username image'
+      })
+      .populate({
+        path: 'children',
+        match: { author: authorId }, // Filter children with the specified authorId
+      }).exec()
+
+    const totalThreadsCount = await Thread.countDocuments({
+      'children.author': authorId
+    })
+
+    const isNext = totalThreadsCount > skipAmount + threads.length
+
+    return { threads, isNext }
+  } catch (error: any) {
+    console.log(`Error al obtener los hilos: ${error.message}`)
+    throw new Error('Imposible obtener los hilos')
   }
 }

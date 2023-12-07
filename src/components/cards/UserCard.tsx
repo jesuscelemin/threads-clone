@@ -17,7 +17,7 @@ const UserCard = ({ id, name, username, image }: UserCardProps) => {
 
         <div className="flex flex-col">
           <h3 className="base-semibold text-light-100">{name}</h3>
-          <p className="text-light-400">@{username}</p>
+          <p className="text-light-400">{username}</p>
         </div>
       </div>
 

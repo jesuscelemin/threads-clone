@@ -27,7 +27,6 @@ export interface CreateThreadParams {
   image: string
   author: string
   path: string
-  communityId: string | null
 }
 
 export interface AddCommentToThreadParams {

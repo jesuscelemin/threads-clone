@@ -85,7 +85,6 @@ const PostThread = ({ user }: PostThreadProps) => {
         text: values.thread || '',
         image: values.image || '',
         author: user._id,
-        communityId: null,
         path: pathname
       })
 
@@ -121,7 +120,7 @@ const PostThread = ({ user }: PostThreadProps) => {
             render={({ field }) => (
               <FormItem className='w-full'>
                 <Label className="base-semibold text-light-100">
-                  @{user.username}
+                  {user.username}
                 </Label>
                 <FormControl>
                   <Textarea

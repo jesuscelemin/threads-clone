@@ -34,20 +34,24 @@ export interface PostThreadProps {
 export interface ThreadCardProps {
   id: string
   currentUserId: string
-  parentId: string | null
+  parentId: {
+    _id: string,
+    author: {
+      _id: string,
+      name: string,
+      username: string,
+      image: string,
+    }
+  }
   text: string
   image: string
   createdAt: Date
   author: {
     name: string
+    username: string
     image: string
     _id: string
   }
-  community: {
-    id: string
-    name: string
-    image: string
-  } | null
   comments: {
     author: {
       _id: string,
@@ -56,8 +60,42 @@ export interface ThreadCardProps {
   }[]
   isComment?: boolean
   isProfile?: boolean
-  initialLikes?: []
   likes?: string[]
+}
+
+export interface RepostCardProps {
+  id: string
+  currentUserId: string
+  parentId: {
+    id: string
+    likes: string[]
+    createdAt: Date
+    children: string[]
+  }
+  text: string
+  image: string
+  createdAt: Date
+  author: {
+    name: string
+    username: string
+    image: string
+    _id: string
+  }
+  comments: {
+    author: {
+      _id: string
+      image: string
+    }
+  }[]
+  isComment?: boolean
+  isProfile?: boolean
+  likes?: string[]
+  repostedFrom: {
+    _id: string
+    name: string
+    username: string
+    image: string
+  }
 }
 
 export interface CommentProps {

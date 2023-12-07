@@ -10,7 +10,7 @@ export interface IUser extends Document {
   bio: string
   threads: Schema.Types.ObjectId[]
   onboarded: boolean
-  communities: Schema.Types.ObjectId[]
+  following: Schema.Types.ObjectId[]
   createdAt: Date
 }
 
@@ -24,7 +24,7 @@ const UserSchema = new Schema<IUser>({
   bio: String,
   threads: [{ type: Schema.Types.ObjectId, ref: 'Thread' }],
   onboarded: { type: Boolean, default: false },
-  communities: [{ type: Schema.Types.ObjectId, ref: 'Community' }],
+  following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdAt: {
     type: Date,
     default: Date.now

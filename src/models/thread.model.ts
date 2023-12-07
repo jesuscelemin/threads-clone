@@ -4,7 +4,6 @@ export interface IThread extends Document {
   text: string
   author: Schema.Types.ObjectId
   image: string
-  community: Schema.Types.ObjectId
   parentId: string
   likes: Schema.Types.ObjectId[]
   repostedFrom: Schema.Types.ObjectId
@@ -25,7 +24,6 @@ const ThreadSchema = new Schema<IThread>({
   image: {
     type: String
   },
-  community: { type: Schema.Types.ObjectId, ref: 'Community' },
   parentId: {
     type: String
   },

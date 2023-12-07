@@ -5,7 +5,7 @@ import Image from 'next/image'
 const Avatar = ({ src, width, height, isFill, className }: AvatarProps) => {
   return (
     <Image
-      src={src ?? '/assets/placeholder.svg'}
+      src={src || '/assets/placeholder.svg'}
       alt="Avatar"
       width={width}
       height={height}

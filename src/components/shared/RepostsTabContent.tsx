@@ -7,7 +7,7 @@ const RepostsTabContent = async ({
   userId,
   currentUserId
 }: {
-  userId: string
+  userId:string
   currentUserId: string
 }) => {
   const result = await getRepostsByUser(userId)
@@ -24,17 +24,17 @@ const RepostsTabContent = async ({
               text={thread.text}
               image={thread.image}
               author={{
+                username: thread.author.username,
                 name: thread.author.name,
                 image: thread.author.image,
                 _id: thread.author._id
               }}
               createdAt={thread.createdAt}
-              comments={thread.comments}
-              community={thread.community}
+              comments={thread.children}
               likes={thread.likes}
             />
 
-            <Separator className="mt-4 bg-light-400/50" />
+            <Separator className="my-4 bg-light-400/50" />
           </React.Fragment>
         ))
       ) : (

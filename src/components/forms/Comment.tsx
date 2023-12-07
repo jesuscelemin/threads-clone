@@ -127,7 +127,7 @@ const Comment = ({
             render={({ field }) => (
               <FormItem className='w-full'>
                 <Label className="base-semibold text-light-100">
-                  @{username}
+                  {username}
                 </Label>
                 <FormControl>
                   <Textarea
