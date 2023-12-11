@@ -16,8 +16,11 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { createUser } from '@/lib/actions/user.action'
 import { useRouter } from 'next/navigation'
+import { useToast } from '../ui/use-toast'
+
 
 const Register = () => {
+  const { toast } = useToast()
   const router = useRouter()
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -38,11 +41,19 @@ const Register = () => {
       })
 
       if (user) {
+        toast({
+          title: 'Usuario creado con éxito',
+          description: 'Logueate para poder entrar.'
+        })
         form.reset()
         router.push('/')
       }
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+        description: 'Inténtalo de nuevo con otro email.'
+      })
     }
   }
 

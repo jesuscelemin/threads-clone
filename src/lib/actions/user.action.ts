@@ -84,8 +84,8 @@ export async function updateUser(params: UpdateUserParams) {
 
     revalidatePath(path)
   } catch (error) {
-    console.log('Error actualizando al usuario: ', error)
-    throw error
+    console.log(error)
+    return { message: 'Error actualizando al usuario' }
   }
 }
 
@@ -97,11 +97,11 @@ export async function loginUser(params: LoginUserParams) {
 
     const user = await User.findOne({ email })
 
-    if (!user) return { message: 'El email no existe' }
+    if (!user) throw new Error('El usuario no existe')
 
     const isPasswordValid = bcrypt.compareSync(password, user.hashedPassword)
 
-    if (!isPasswordValid) return { message: 'Contraseña incorrecta' }
+    if (!isPasswordValid) throw new Error('Contraseña incorrecta')
 
     return { user: JSON.stringify(user) }
   } catch (error) {

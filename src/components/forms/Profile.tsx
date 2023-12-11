@@ -22,6 +22,7 @@ import { isBase64Image } from '@/lib/utils'
 import { useUploadThing } from '@/lib/uploadthing'
 import { updateUser } from '@/lib/actions/user.action'
 import Avatar from '../shared/Avatar'
+import { toast } from '../ui/use-toast'
 
 const Profile = ({ user, btnTitle }: ProfileProps) => {
   const router = useRouter()
@@ -89,13 +90,15 @@ const Profile = ({ user, btnTitle }: ProfileProps) => {
         path: pathname
       })
 
-      if (pathname.startsWith('/profile')) {
-        router.push(pathname)
-      } else {
-        router.push('/')
-      }
+      toast({
+        title: 'Usuario actualizado con éxito'
+      })
+      router.push('/')
     } catch (error) {
-      console.log(error)
+      toast({
+        variant: 'destructive',
+        title: 'Error al actualizar el usuario'
+      })
     }
   }
 

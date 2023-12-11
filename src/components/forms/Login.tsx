@@ -17,8 +17,11 @@ import Link from 'next/link'
 import { loginUser } from '@/lib/actions/user.action'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { useToast } from '../ui/use-toast'
+
 
 const Login = () => {
+  const { toast } = useToast()
   const router = useRouter()
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -52,8 +55,13 @@ const Login = () => {
           }
         }
       }
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      toast({
+        title: error.message,
+        variant: 'destructive',
+        description: 'Inténtalo de nuevo.'
+      })
+      console.log(error.message)
     }
   }
 

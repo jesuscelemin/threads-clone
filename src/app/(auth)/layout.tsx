@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster'
 import '../globals.css'
 import Image from 'next/image'
 import React from 'react'
@@ -25,6 +26,7 @@ export default async function AuthLayout({
             </div>
             <div className="z-10 flex w-full justify-center">{children}</div>
           </div>
+          <Toaster />
         </main>
       </body>
     </html>

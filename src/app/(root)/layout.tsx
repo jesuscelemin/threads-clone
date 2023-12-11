@@ -8,6 +8,7 @@ import { inter } from '@/components/ui/font'
 import { redirect } from 'next/navigation'
 import SidebarRight from '@/components/shared/SidebarRight'
 import { getCurrentUser } from '@/lib/actions/user.action'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'Threads Clone',
@@ -37,6 +38,7 @@ export default async function RootLayout({
           </main>
           <BottomNav />
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   )

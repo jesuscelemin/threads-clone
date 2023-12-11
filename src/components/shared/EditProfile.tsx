@@ -26,7 +26,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
         <DialogContent className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-md border-light-400 bg-dark-100 p-8 text-light-100 shadow">
           <DialogHeader>
             <DialogTitle className="mb-2">
-              <h2 className="h1-bold ">Editar Perfil</h2>
+              <div className="h1-bold ">Editar Perfil</div>
             </DialogTitle>
           </DialogHeader>
           <Profile user={user} btnTitle="Guardar" />
