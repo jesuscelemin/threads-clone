@@ -17,9 +17,11 @@ const RepliesTabContent = async ({
 
   if (filteredThreads.length === 0) {
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <p className="text-light-400">Aún no hay respuestas.</p>
-      </div>
+
+        <div className="mt-2 flex h-[50vh] w-full items-center justify-center">
+          <p className="text-light-400">Aún no hay respuestas.</p>
+        </div>
+
     )
   }
 

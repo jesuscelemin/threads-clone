@@ -13,12 +13,13 @@ const page = async ({ params }: { params: { id: string } }) => {
   return (
     <section>
       <Profile
-        currentUserId={user._id}
+        currentUser={user}
         userId={userInfo._id}
         name={userInfo.name}
         image={userInfo.image}
         username={userInfo.username}
         bio={userInfo.bio}
+        followersNumber={userInfo.followers.length}
       />
 
       <div className="mt-9">

@@ -1,17 +1,20 @@
 import { ProfileInfoProps } from '@/types'
 import Avatar from './Avatar'
+import { formatNumber } from '@/lib/utils'
+import EditProfile from './EditProfile'
 
 const Profile = ({
-  currentUserId,
+  currentUser,
   userId,
   name,
   image,
   username,
-  bio
+  bio,
+  followersNumber
 }: ProfileInfoProps) => {
   return (
     <section className="flex w-full flex-col">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div className="flex flex-col">
           <div className="h1-bold text-light-100">{name}</div>
           <div className="mt-1 flex">
@@ -27,10 +30,21 @@ const Profile = ({
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-3 flex flex-col gap-4">
         <p className="text-light-100">{bio}</p>
 
-        
+        <div className="flex items-end justify-between">
+          <div className="flex">
+            {followersNumber > 0 && (
+              <p className="text-light-400">
+                {formatNumber(followersNumber)} seguido
+                {followersNumber > 1 ? 'res' : 'r'}
+              </p>
+            )}
+          </div>
+
+          {userId === currentUser._id && <EditProfile user={currentUser} />}
+        </div>
       </div>
     </section>
   )

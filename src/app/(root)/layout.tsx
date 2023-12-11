@@ -28,8 +28,10 @@ export default async function RootLayout({
         <AuthProvider>
           <main className="flex flex-row">
             <SidebarLeft user={user} />
-            <section className="flex min-h-screen flex-1 flex-col items-center bg-dark-100 px-6 pb-10 pt-28 max-md:pb-32 sm:px-10">
-              <div className="w-full max-w-[620px]">{children}</div>
+            <section className="flex min-h-screen flex-1 flex-col items-center bg-dark-100 px-6 pb-10 pt-5 max-md:pb-32 sm:px-10 md:pt-28">
+              <div className="mt-[74px] w-full max-w-[620px] md:mt-0">
+                {children}
+              </div>
             </section>
             <SidebarRight />
           </main>

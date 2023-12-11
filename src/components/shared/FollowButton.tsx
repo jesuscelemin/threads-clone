@@ -19,9 +19,6 @@ const FollowButton = ({
   const [isFollowing, setIsFollowing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
-  
-  console.log(pathname)
-  
 
   useEffect(() => {
     const checkIsFollowing = async () => {

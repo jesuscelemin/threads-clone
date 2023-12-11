@@ -81,7 +81,7 @@ const Profile = ({ user, btnTitle }: ProfileProps) => {
         userId: user._id,
         updateData: {
           name: values.name,
-          username: `@${values.username.toLowerCase()}`,
+          username: values.username.toLowerCase(),
           bio: values.bio,
           image: values.image,
           onboarded: true
@@ -89,8 +89,8 @@ const Profile = ({ user, btnTitle }: ProfileProps) => {
         path: pathname
       })
 
-      if (pathname === '/profile/edit') {
-        router.back()
+      if (pathname.startsWith('/profile')) {
+        router.push(pathname)
       } else {
         router.push('/')
       }

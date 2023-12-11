@@ -35,12 +35,12 @@ export interface ThreadCardProps {
   id: string
   currentUserId: string
   parentId: {
-    _id: string,
+    _id: string
     author: {
-      _id: string,
-      name: string,
-      username: string,
-      image: string,
+      _id: string
+      name: string
+      username: string
+      image: string
     }
   }
   text: string
@@ -107,12 +107,19 @@ export interface CommentProps {
 }
 
 export interface ProfileInfoProps {
-  currentUserId: string
+  currentUser: {
+    _id: string
+    name: string
+    username: string
+    image: string
+    bio: string
+  }
   userId: string
   name: string
   image: string
   username: string
   bio: string
+  followersNumber: number
 }
 
 export interface ThreadsTabContentProps {
@@ -131,4 +138,28 @@ export interface UserCardProps {
   name: string
   username: string
   image: string
+}
+
+export interface RepostTabContentProps {
+  currentUserId: string
+  userId: string
+}
+
+export interface MoreButtonProps {
+  currentUserId: string
+  authorId: string
+  threadId: string
+  parentId: string
+  isComment?: boolean
+  isProfile?: boolean
+}
+
+export interface EditProfileProps {
+  user: {
+    _id: string
+    name: string
+    username: string
+    image: string
+    bio: string
+  }
 }

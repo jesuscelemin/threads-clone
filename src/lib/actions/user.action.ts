@@ -82,9 +82,7 @@ export async function updateUser(params: UpdateUserParams) {
 
     await User.findByIdAndUpdate({ _id: userId }, updateData, { new: true })
 
-    if (path === '/profile/edit') {
-      revalidatePath(path)
-    }
+    revalidatePath(path)
   } catch (error) {
     console.log('Error actualizando al usuario: ', error)
     throw error

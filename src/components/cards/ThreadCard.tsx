@@ -79,7 +79,7 @@ const ThreadCard = ({
         <div className="flex w-full items-start justify-between">
           <Link href={`/profile/${author._id}`}>
             <h2 className="base-semibold cursor-pointer text-light-100">
-              {author.name}
+              {author.username}
             </h2>
           </Link>
 

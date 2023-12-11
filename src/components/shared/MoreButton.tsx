@@ -10,25 +10,21 @@ import {
 } from '@radix-ui/react-dropdown-menu'
 import { usePathname, useRouter } from 'next/navigation'
 import { deleteThread } from '@/lib/actions/thread.action'
+import { MoreButtonProps } from '@/types'
 
 const MoreButton = ({
   currentUserId,
   authorId,
   threadId,
   parentId,
-  isComment
-}: {
-  currentUserId: string
-  authorId: string
-  threadId: string
-  parentId: string
-  isComment: boolean
-}) => {
+  isComment,
+  isProfile
+}: MoreButtonProps) => {
   const pathname = usePathname()
   const router = useRouter()
 
   const handleRemoveThread = async () => {
-    await deleteThread(JSON.parse(threadId), pathname)
+    await deleteThread(JSON.parse(threadId!), pathname)
     if (!parentId || !isComment) {
       router.push('/')
     }
@@ -40,7 +36,21 @@ const MoreButton = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="relative">
             <div className="mt-[-.4rem] cursor-pointer rounded-full p-2 outline-none hover:bg-dark-200 focus:bg-dark-500">
-              <Image src="/assets/more.svg" alt="more" width={20} height={20} />
+              {isProfile ? (
+                <Image
+                  src="/assets/more-c.svg"
+                  alt="more"
+                  width={24}
+                  height={24}
+                />
+              ) : (
+                <Image
+                  src="/assets/more.svg"
+                  alt="more"
+                  width={20}
+                  height={20}
+                />
+              )}
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="absolute left-[-9rem] top-[.5rem] min-w-[160px] border border-dark-500 bg-dark-400">

@@ -8,7 +8,7 @@ const page = async () => {
 
   return (
     <section>
-      <h1 className="h1-semibold text-light-100">Crear Hilo</h1>
+      <h1 className="h1-semibold mb-4 text-light-100">Crear Hilo</h1>
 
       <PostThread user={user} />
     </section>
