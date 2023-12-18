@@ -33,24 +33,25 @@ export async function createThread(params: CreateThreadParams) {
   }
 }
 
-export async function getThreads(pageNumber = 1, pageSize = 20) {
+export interface Options {
+  page?: number
+  pageSize?: number
+}
+
+export async function getThreads(page: number = 1, pageSize: number = 7) {
   try {
     await connectToDB()
 
-    // Calculate de number of threads to skip
-    const skipAmount = (pageNumber - 1) * pageSize
+    const skipAmount = (page - 1) * pageSize
 
-    // Get the threads that have no parents (top-level threads...) threads that are not comments.
-    const threads = await Thread.find({
+    const threadQuery = {
       $or: [
-        {
-          parentId: { $in: [null, undefined] }
-        }, // Threads with no parentId (comments)
-        {
-          repostedFrom: { $ne: null }
-        } // Threads with repostedFrom no null
+        { parentId: { $in: [null, undefined] } },
+        { repostedFrom: { $ne: null } }
       ]
-    })
+    }
+
+    const threads = await Thread.find(threadQuery)
       .sort({ createdAt: 'desc' })
       .skip(skipAmount)
       .limit(pageSize)
@@ -77,18 +78,13 @@ export async function getThreads(pageNumber = 1, pageSize = 20) {
         model: User,
         select: '_id name username image'
       })
-      .exec()
+      .lean()
 
-    const totalThreadsCount = await Thread.countDocuments({
-      $or: [
-        { parentId: { $in: [null, undefined] } },
-        { repostedFrom: { $ne: null } }
-      ]
-    }) // Get the total count of threads
+    const totalThreadsCount = await Thread.countDocuments(threadQuery) // Get the total count of threads
 
     const isNext = totalThreadsCount > skipAmount + threads.length
 
-    return { threads, isNext }
+    return { threads: JSON.parse(JSON.stringify(threads)), isNext }
   } catch (error: any) {
     console.log(`Error al obtener los hilos: ${error.message}`)
     throw new Error('Imposible obtener los hilos')
@@ -379,8 +375,7 @@ export async function getChildThreadsByAuthorId(
 ) {
   try {
     await connectToDB()
-    
-    
+
     const skipAmount = (pageNumber - 1) * pageSize
 
     const threads = await Thread.find()
@@ -394,8 +389,9 @@ export async function getChildThreadsByAuthorId(
       })
       .populate({
         path: 'children',
-        match: { author: authorId }, // Filter children with the specified authorId
-      }).exec()
+        match: { author: authorId } // Filter children with the specified authorId
+      })
+      .exec()
 
     const totalThreadsCount = await Thread.countDocuments({
       'children.author': authorId
