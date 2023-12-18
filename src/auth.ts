@@ -5,7 +5,7 @@ import User from './models/user.model'
 import bcrypt from 'bcrypt'
 
 export const {
-  handlers: { GET, POST },
+  handlers,
   auth,
   signIn,
   signOut
