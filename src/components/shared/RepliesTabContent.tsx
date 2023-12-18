@@ -9,7 +9,7 @@ const RepliesTabContent = async ({
   userId
 }: RepliesTabContentProps) => {
   const result = await getThreads()
-  const filteredThreads = Object.values(result.threads).filter(thread =>
+  const filteredThreads = Object.values(result.threads).filter((thread: any) =>
     thread.children.some(
       (child: any) => child.author._id.toString() === userId.toString()
     )

@@ -5,8 +5,6 @@ import LoadMore from '@/components/shared/LoadMore'
 import { Separator } from '@/components/ui/separator'
 import { getThreads } from '@/lib/actions/thread.action'
 import { getCurrentUser } from '@/lib/actions/user.action'
-import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
 
 export default async function Home() {
@@ -17,21 +15,6 @@ export default async function Home() {
 
   return (
     <main>
-      <div className="fixed left-0 top-0 z-10 mb-2 flex h-[74px] w-full items-center justify-center bg-dark-100 md:hidden">
-        <Link
-          href="/"
-          className="flex items-center justify-center gap-4 p-6 lg:justify-start"
-        >
-          <Image
-            src="/assets/logo.svg"
-            alt="logo"
-            width={32}
-            height={32}
-            className="transition duration-500 hover:scale-110"
-          />
-        </Link>
-      </div>
-
       <PostThread user={user} />
       <Separator className="my-4 bg-light-400" />
 
