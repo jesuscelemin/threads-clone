@@ -34,26 +34,27 @@ const Register = () => {
 
   const handleRegister = async (data: z.infer<typeof RegisterSchema>) => {
     try {
-      const user = await createUser({
+      const res = await createUser({
         name: data.name,
         email: data.email,
         password: data.password
       })
 
-      if (user) {
+      if (res.user) {
         toast({
           title: 'Usuario creado con éxito',
           description: 'Logueate para poder entrar.'
         })
         form.reset()
         router.push('/')
+      } else {
+        toast({
+          title: res.message,
+          variant: 'destructive',
+          description: 'Inténtalo de nuevo con otro email.'
+        })
       }
     } catch (error: any) {
-      toast({
-        title: error.message,
-        variant: 'destructive',
-        description: 'Inténtalo de nuevo con otro email.'
-      })
     }
   }
 

@@ -19,7 +19,6 @@ import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { useToast } from '../ui/use-toast'
 
-
 const Login = () => {
   const { toast } = useToast()
   const router = useRouter()
@@ -32,6 +31,7 @@ const Login = () => {
   })
 
   const handleLogin = async (data: z.infer<typeof LoginSchema>) => {
+    
     try {
       const res = await loginUser({
         email: data.email,
@@ -54,14 +54,15 @@ const Login = () => {
             router.push('/')
           }
         }
+      } else {
+        toast({
+          title: res.message,
+          variant: 'destructive',
+          description: 'Inténtalo de nuevo.'
+        })
       }
     } catch (error: any) {
-      toast({
-        title: error.message,
-        variant: 'destructive',
-        description: 'Inténtalo de nuevo.'
-      })
-      console.log(error.message)
+      console.log(error)
     }
   }
 

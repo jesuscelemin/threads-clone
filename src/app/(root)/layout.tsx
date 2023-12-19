@@ -29,9 +29,9 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.variable}>
         <AuthProvider>
-          <main className="flex flex-row">
+          <main className="no-scrollbar flex flex-row">
             <SidebarLeft user={user} />
-            <section className="flex min-h-screen flex-1 flex-col items-center bg-dark-100 px-6 pb-10 pt-5 max-md:pb-32 sm:px-10 md:pt-28">
+            <section className="no-scrollbar flex min-h-screen flex-1 flex-col items-center bg-dark-100 px-6 pb-10 pt-5 max-md:pb-32 sm:px-10 md:pt-28">
               <div className="mt-[74px] w-full max-w-[620px] md:mt-0">
                 <div className="fixed left-0 top-0 z-10 mb-2 flex h-[74px] w-full items-center justify-center bg-dark-100 md:hidden">
                   <Link

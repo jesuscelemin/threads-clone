@@ -67,7 +67,7 @@ export async function createUser(params: CreateUserParams) {
 
     await newUser.save()
     revalidatePath('/register')
-    return JSON.stringify(user)
+    return { user: JSON.stringify(user) }
   } catch (error) {
     console.log(error)
     throw error
@@ -97,11 +97,11 @@ export async function loginUser(params: LoginUserParams) {
 
     const user = await User.findOne({ email })
 
-    if (!user) throw new Error('El usuario no existe')
+    if (!user) return {message: 'El usuario no existe'}
 
     const isPasswordValid = bcrypt.compareSync(password, user.hashedPassword)
 
-    if (!isPasswordValid) throw new Error('Contraseña incorrecta')
+    if (!isPasswordValid) return {message: 'Contraseña incorrecta'}
 
     return { user: JSON.stringify(user) }
   } catch (error) {
