@@ -5,7 +5,7 @@ import User from './models/user.model'
 import bcrypt from 'bcrypt'
 
 export const {
-  handlers,
+  handlers: {GET, POST},
   auth,
   signIn,
   signOut
@@ -55,7 +55,7 @@ export const {
       return session
     }
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   pages: {
     signIn: '/login',
     newUser: '/register'

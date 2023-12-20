@@ -31,7 +31,6 @@ const Login = () => {
   })
 
   const handleLogin = async (data: z.infer<typeof LoginSchema>) => {
-    
     try {
       const res = await loginUser({
         email: data.email,
@@ -62,7 +61,7 @@ const Login = () => {
         })
       }
     } catch (error: any) {
-      console.log(error)
+      console.log(error.message)
     }
   }
 
